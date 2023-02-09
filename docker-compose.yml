@@ -1,0 +1,36 @@
+version: '3.5'
+services:
+  ProductOwner.Microservice:
+   image: ${DOCKER_REGISTRY-}ownerservice:v1
+   build:
+    context: ./ProductOwner.Microservice
+    dockerfile: Dockerfile
+   environment:
+    - ASPNETCORE_ENVIRONMENT=Production
+    - CONNECTIONSTRINGS__DEFAULTCONNECTION=Data Source=192.168.1.35,5432;Initial Catalog=MicroServProductOwner;User Id=postgres;Password=admin
+    - RABBIT_MQ_SERVER=localhost
+    - RABBIT_MQ_USERNAME=guest
+    - RABBIT_MQ_PASSWORD=guest
+    - RABBITMQSETTINGS__EXCHANGENAME=OfferExchange
+    - RABBITMQSETTINGS__EXCHHANGETYPE=direct
+    - RABBITMQSETTINGS__QUEUENAME=offer_queue
+    - RABBITMQSETTINGS__ROUTEKEY=offer_route
+   ports:
+    - "4201:80"
+  ProductUser.Microservice:
+   image: ${DOCKER_REGISTRY-}userservice:v1
+   build:
+    context: ./ProductUser.Microservice
+    dockerfile: Dockerfile
+   environment:
+    - ASPNETCORE_ENVIRONMENT=Production
+    - CONNECTIONSTRINGS__DEFAULTCONNECTION=Data Source=192.168.1.35,5432;Initial Catalog=MicroServProductOwner;User Id=postgres;Password=admin
+    - RABBIT_MQ_SERVER=localhost
+    - RABBIT_MQ_USERNAME=guest
+    - RABBIT_MQ_PASSWORD=guest
+    - RABBITMQSETTINGS__EXCHANGENAME=OfferExchange
+    - RABBITMQSETTINGS__EXCHHANGETYPE=direct
+    - RABBITMQSETTINGS__QUEUENAME=offer_queue
+    - RABBITMQSETTINGS__ROUTEKEY=offer_route
+   ports:
+    - "5000:80"
